@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tripaui.Views.Trips.ReviewsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Tripaui.Views.Controlls"
+    xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
+    xmlns:dxe="clr-namespace:DevExpress.Maui.Editors;assembly=DevExpress.Maui.Editors"
+    xmlns:entities="clr-namespace:Shared.Entities;assembly=Shared"
+    xmlns:models="clr-namespace:Shared.Common;assembly=Shared"
+    xmlns:styles="clr-namespace:Tripaui.Resources.Styles"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:tripsviewmodel="clr-namespace:Tripaui.ViewModels.Trips"
+    Title="ReviewsPage"
+    x:DataType="tripsviewmodel:ReviewsViewModel"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding PageAppearingCommand}" EventName="Appearing" />
+    </ContentPage.Behaviors>
+    <Grid BackgroundColor="{StaticResource BackgroundColor0}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <HorizontalStackLayout Grid.Row="0">
+                <Border
+                    Margin="5"
+                    Padding="10"
+                    BackgroundColor="Transparent"
+                    HeightRequest="50"
+                    HorizontalOptions="Start"
+                    Stroke="{StaticResource Primary}"
+                    StrokeShape="RoundRectangle 25"
+                    WidthRequest="50">
+                    <ImageButton Command="{Binding GoBackCommand}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.ArrowLeft}"
+                                Size="22"
+                                Color="{StaticResource Primary}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+
+
+                </Border>
+                <Label
+                    Margin="20,0,0,0"
+                    FontFamily="KalamRegular"
+                    FontSize="40"
+                    Text="Reviews"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <Border
+                Grid.Row="1"
+                Padding="5"
+                BackgroundColor="{StaticResource BackgroundColor1}"
+                Stroke="{StaticResource Primary}"
+                StrokeShape="RoundRectangle 10"
+                StrokeThickness="2">
+                <VerticalStackLayout
+                    x:Name="SortingButtonsLayout"
+                    BackgroundColor="Transparent"
+                    HeightRequest="45">
+                    <Grid
+                        x:Name="SortinButtonsHeaderLayout"
+                        Padding="5"
+                        VerticalOptions="End">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            FontSize="20"
+                            Text="Sorting"
+                            VerticalOptions="Center" />
+
+                        <Border
+                            x:Name="SortingIcon"
+                            Grid.Column="1"
+                            BackgroundColor="Black"
+                            HeightRequest="34"
+                            StrokeShape="Polyline 0,17 10,0 20,17 0,17"
+                            StrokeThickness="0"
+                            VerticalOptions="Center"
+                            WidthRequest="20" />
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="SortinButtonsHeaderLayout_Tapped" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+
+                    <CollectionView
+                        ItemsLayout="HorizontalList"
+                        ItemsSource="{Binding Chips}"
+                        SelectedItem="{Binding SelectedOrder}"
+                        SelectionChangedCommand="{Binding ChangeSortDirectionCommand}"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    x:Name="SortingItem"
+                                    Padding="15"
+                                    HorizontalOptions="Center"
+                                    Stroke="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 20"
+                                    StrokeThickness="2"
+                                    Style="{StaticResource Key=SelectedItemOnList}">
+                                    <Label
+                                        FontSize="20"
+                                        MaxLines="1"
+                                        Text="{Binding ., Converter={StaticResource EnumToStringConverter}}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+
+            <dxcv:DXCollectionView
+                Grid.Row="2"
+                ItemsSource="{Binding Reviews}"
+                MaximumHeightRequest="560"
+                SelectionMode="Single">
+                <dxcv:DXCollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="entities:ReviewModel">
+                        <dxcv:SwipeContainer>
+                            <dxcv:SwipeContainer.ItemView>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="90*" />
+                                        <ColumnDefinition Width="10*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border BackgroundColor="{StaticResource BackgroundColor1}" StrokeShape="RoundRectangle 20">
+                                        <HorizontalStackLayout>
+                                            <Image
+                                                HeightRequest="100"
+                                                MinimumWidthRequest="152"
+                                                Source="{Binding Photo, Converter={StaticResource ByteArrayToImageSourceConverter}}"
+                                                WidthRequest="152" />
+                                            <VerticalStackLayout Grid.Column="1" Padding="5">
+                                                <Label
+                                                    FontAttributes="Bold"
+                                                    FontSize="14"
+                                                    Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy  HH:mm:ss}'}" />
+                                                <Label
+                                                    Padding="5"
+                                                    BackgroundColor="{StaticResource BackgroundColor1}"
+                                                    FontSize="14"
+                                                    MaxLines="5"
+                                                    MaximumWidthRequest="200"
+                                                    Text="{Binding Text}" />
+                                            </VerticalStackLayout>
+
+
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type tripsviewmodel:ReviewsViewModel}}, Path=OpenBottomSheetForUpdateCommand}" CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                    <Border
+                                        Grid.Column="1"
+                                        Margin="0,0,0,0"
+                                        Padding="4"
+                                        HeightRequest="36"
+                                        HorizontalOptions="End"
+                                        Stroke="{StaticResource Primary}"
+                                        StrokeShape="RoundRectangle 25"
+                                        VerticalOptions="Center"
+                                        WidthRequest="36">
+                                        <Image Margin="4">
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="FontAwesome"
+                                                    Glyph="{x:Static styles:IconFont.Microphone}"
+                                                    Size="10"
+                                                    Color="{StaticResource Primary}" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:RelativeSource AncestorType={x:Type tripsviewmodel:ReviewsViewModel}}, Path=StartVoiceListeningCommand}" CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+                            </dxcv:SwipeContainer.ItemView>
+                            <dxcv:SwipeContainer.EndSwipeItems>
+                                <dxcv:SwipeItem
+                                    BackgroundColor="Transparent"
+                                    Caption="Delete"
+                                    Command="{Binding Path=DeleteReviewCommand, Source={RelativeSource AncestorType={x:Type tripsviewmodel:ReviewsViewModel}}}"
+                                    FontColor="Black"
+                                    FontSize="Large">
+                                    <dxcv:SwipeItem.Image>
+                                        <FontImageSource
+                                            FontFamily="FontAwesome"
+                                            Glyph="{x:Static styles:IconFont.TrashAlt}"
+                                            Size="22"
+                                            Color="{StaticResource Black}" />
+                                    </dxcv:SwipeItem.Image>
+                                </dxcv:SwipeItem>
+                            </dxcv:SwipeContainer.EndSwipeItems>
+                        </dxcv:SwipeContainer>
+
+
+                    </DataTemplate>
+                </dxcv:DXCollectionView.ItemTemplate>
+                <dxcv:DXCollectionView.Behaviors>
+                    <toolkit:EventToCommandBehavior Command="{Binding OpenBottomSheetForUpdateCommand}" EventName="SelectionChanged" />
+                </dxcv:DXCollectionView.Behaviors>
+            </dxcv:DXCollectionView>
+
+            <Border
+                Grid.Row="3"
+                Margin="5"
+                HeightRequest="50"
+                StrokeShape="RoundRectangle 25"
+                VerticalOptions="End"
+                WidthRequest="{Binding Width}">
+                <Button
+                    BackgroundColor="{StaticResource Primary}"
+                    Command="{Binding OpenAddBottomSheetCommand}"
+                    Text="Create New Review" />
+            </Border>
+
+
+        </Grid>
+        <!--  Add Bottom Sheet  -->
+        <controls:BottomSheet
+            x:Name="AddBottomSheet"
+            HeaderText="Add Review"
+            SheetHeight="600">
+            <controls:BottomSheet.BottomSheetContent>
+                <Grid Padding="0,10" BackgroundColor="{StaticResource BackgroundColor0}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="25*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  region Current Places on trip  -->
+
+                    <CollectionView
+                        Grid.Row="0"
+                        ItemsLayout="HorizontalList"
+                        ItemsSource="{Binding PlacesNames}"
+                        SelectedItem="{Binding SelectedName}"
+                        SelectionMode="Single">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:PlaceName">
+                                <Border
+                                    Padding="15"
+                                    HorizontalOptions="Center"
+                                    Stroke="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 20"
+                                    StrokeThickness="2"
+                                    Style="{StaticResource Key=SelectedItemOnList}">
+                                    <Label
+                                        FontSize="20"
+                                        MaxLines="1"
+                                        Text="{Binding Name}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <!--  endregion  -->
+
+                    <!--  region Current Review  -->
+                    <Border
+                        Grid.Row="1"
+                        Padding="10"
+                        BackgroundColor="{StaticResource BackgroundColor1}"
+                        Stroke="{StaticResource Primary}"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="2">
+                        <Editor
+                            FontSize="Body"
+                            MaxLength="200"
+                            Placeholder="What do you think about that place?"
+                            PlaceholderColor="Black"
+                            Text="{Binding CurrentReview.Text}" />
+                    </Border>
+
+                    <Border
+                        x:Name="AddMicrophoneButton"
+                        Grid.Row="2"
+                        Margin="5"
+                        Padding="5"
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="70"
+                        StrokeShape="RoundRectangle 35"
+                        StrokeThickness="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding RecordCommand}" CommandParameter="{x:Reference AddMicrophoneButton}" />
+                        </Border.GestureRecognizers>
+                        <Border.Behaviors />
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.Microphone}"
+                                    Size="16"
+                                    Color="{StaticResource White}" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+
+                    <Border
+                        Grid.Row="3"
+                        Margin="5"
+                        HeightRequest="70"
+                        StrokeShape="RoundRectangle 35">
+                        <Button
+                            BackgroundColor="#0acc00"
+                            Command="{Binding CreateNewReviewCommand}"
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            IsVisible="{Binding IsNotSaving}"
+                            Text="Add new Review" />
+                    </Border>
+                    <Border
+                        Grid.Row="3"
+                        Margin="5"
+                        BackgroundColor="#0acc00"
+                        HeightRequest="70"
+                        IsVisible="{Binding IsSaving}"
+                        StrokeShape="RoundRectangle 35">
+                        <ActivityIndicator
+                            HeightRequest="18"
+                            HorizontalOptions="Center"
+                            IsRunning="{Binding IsSaving}"
+                            VerticalOptions="Center"
+                            WidthRequest="18"
+                            Color="White" />
+                    </Border>
+
+                    <ImageButton
+                        Grid.Row="4"
+                        Margin="10"
+                        Command="{Binding CloseBottomSheetCommand}"
+                        CommandParameter="{x:Reference AddBottomSheet}"
+                        HeightRequest="40"
+                        HorizontalOptions="Center"
+                        Source="icnmenuclose.jpg"
+                        WidthRequest="40" />
+                </Grid>
+            </controls:BottomSheet.BottomSheetContent>
+        </controls:BottomSheet>
+
+        <!--  Update Bottom Sheet  -->
+        <controls:BottomSheet
+            x:Name="UpdateBottomSheet"
+            HeaderText="Update Review"
+            SheetHeight="600">
+            <controls:BottomSheet.BottomSheetContent>
+                <Grid Padding="0,10" BackgroundColor="{StaticResource BackgroundColor0}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="25*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  region Current Places on trip  -->
+
+                    <CollectionView
+                        Grid.Row="0"
+                        ItemsLayout="HorizontalList"
+                        ItemsSource="{Binding PlacesNames}"
+                        SelectedItem="{Binding SelectedName}"
+                        SelectionMode="Single">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:PlaceName">
+                                <Border
+                                    Padding="15"
+                                    HorizontalOptions="Center"
+                                    Stroke="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 20"
+                                    StrokeThickness="2"
+                                    Style="{StaticResource Key=SelectedItemOnList}">
+                                    <Label
+                                        FontSize="20"
+                                        MaxLines="1"
+                                        Text="{Binding Name}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <!--  endregion  -->
+
+                    <!--  region Current Review  -->
+                    <Border
+                        Grid.Row="1"
+                        Padding="10"
+                        BackgroundColor="{StaticResource BackgroundColor1}"
+                        Stroke="{StaticResource Primary}"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="2">
+                        <Editor
+                            FontSize="Body"
+                            MaxLength="200"
+                            Placeholder="What do you think about that place?"
+                            PlaceholderColor="Black"
+                            Text="{Binding CurrentReview.Text}" />
+                    </Border>
+
+                    <Border
+                        x:Name="UpdateMicrophoneButton"
+                        Grid.Row="2"
+                        Margin="5"
+                        Padding="5"
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="70"
+                        StrokeShape="RoundRectangle 35"
+                        StrokeThickness="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding RecordCommand}" CommandParameter="{x:Reference UpdateMicrophoneButton}" />
+                        </Border.GestureRecognizers>
+                        <Border.Behaviors />
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.Microphone}"
+                                    Size="16"
+                                    Color="{StaticResource White}" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
+
+                    <Border
+                        Grid.Row="3"
+                        Margin="5"
+                        HeightRequest="70"
+                        StrokeShape="RoundRectangle 35">
+                        <Button
+                            BackgroundColor="#0acc00"
+                            Command="{Binding UpdateReviewCommand}"
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            IsVisible="{Binding IsNotSaving}"
+                            Text="Update Review" />
+                    </Border>
+                    <Border
+                        Grid.Row="3"
+                        Margin="5"
+                        BackgroundColor="#0acc00"
+                        HeightRequest="70"
+                        IsVisible="{Binding IsSaving}"
+                        StrokeShape="RoundRectangle 35">
+                        <ActivityIndicator
+                            HeightRequest="18"
+                            HorizontalOptions="Center"
+                            IsRunning="{Binding IsSaving}"
+                            VerticalOptions="Center"
+                            WidthRequest="18"
+                            Color="White" />
+                    </Border>
+                    <ImageButton
+                        Grid.Row="4"
+                        Margin="10"
+                        Command="{Binding CloseBottomSheetCommand}"
+                        CommandParameter="{x:Reference UpdateBottomSheet}"
+                        HeightRequest="40"
+                        HorizontalOptions="Center"
+                        Source="icnmenuclose.jpg"
+                        WidthRequest="40" />
+                </Grid>
+            </controls:BottomSheet.BottomSheetContent>
+        </controls:BottomSheet>
+    </Grid>
+
+
+
+</ContentPage>

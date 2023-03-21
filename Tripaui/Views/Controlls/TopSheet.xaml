@@ -1,0 +1,77 @@
+<ContentView
+    x:Class="Tripaui.Views.Controlls.TopSheet"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="TopSheetControlRoot"
+    HorizontalOptions="Fill"
+    InputTransparent="True"
+    VerticalOptions="Fill">
+
+    <ContentView.Resources>
+        <!--  Grid Styles  -->
+        <Style TargetType="Grid">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="RowSpacing" Value="0" />
+            <Setter Property="ColumnSpacing" Value="0" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+            <Setter Property="HorizontalOptions" Value="Fill" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+        </Style>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <Grid
+            x:Name="BackgroundFader"
+            BackgroundColor="#DDCCCCCC"
+            IgnoreSafeArea="True"
+            IsVisible="false"
+            Opacity="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="TopSheetRowDefinition" Height="{Binding Source={x:Reference TopSheetControlRoot}, Path=SheetHeight, Mode=OneWay}" />
+            </Grid.RowDefinitions>
+
+            <!--  Enclosing Border Control for Content  -->
+            <Border
+                x:Name="MainContent"
+                Grid.Row="0"
+                Margin="-1"
+                Padding="24,24,24,0"
+                HorizontalOptions="Fill"
+                StrokeThickness="0"
+                TranslationY="{Binding Source={x:Reference TopSheetControlRoot}, Path=SheetHeight, Mode=OneWay}"
+                VerticalOptions="Fill">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,0,32,32" />
+                </Border.StrokeShape>
+
+                <Grid RowSpacing="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  Header Content  -->
+                    <Label
+                        x:Name="HeaderLabel"
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Style="{Binding Source={x:Reference TopSheetControlRoot}, Path=HeaderStyle, Mode=OneWay}"
+                        Text="{Binding Source={x:Reference TopSheetControlRoot}, Path=HeaderText, Mode=OneWay}"
+                        VerticalOptions="Center"
+                        VerticalTextAlignment="Center" />
+
+                    <!--  Main Content  -->
+                    <Grid x:Name="TopSheetContentGrid" Grid.Row="1" />
+
+                </Grid>
+
+            </Border>
+
+
+
+        </Grid>
+    </ContentView.Content>
+
+</ContentView>

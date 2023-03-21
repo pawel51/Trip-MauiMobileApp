@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tripaui.Views.Trips.PlanTripPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:common="clr-namespace:Shared.Common;assembly=Shared"
+    xmlns:models="clr-namespace:Shared.GoogleApiModels;assembly=Shared"
+    xmlns:photo="clr-namespace:GoogleApi.Entities.Places.Photos.Response;assembly=GoogleApi"
+    xmlns:styles="clr-namespace:Tripaui.Resources.Styles"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:tripsviewmodel="clr-namespace:Tripaui.ViewModels.Trips"
+    Title="PlanTripPage"
+    x:DataType="tripsviewmodel:PlanTripViewModel"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding PageAppearingCommand}" EventName="Appearing" />
+    </ContentPage.Behaviors>
+    <VerticalStackLayout BackgroundColor="{StaticResource BackgroundColor0}">
+        <Grid Margin="15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border
+                Padding="10"
+                BackgroundColor="Transparent"
+                HeightRequest="50"
+                HorizontalOptions="Start"
+                Stroke="{StaticResource Primary}"
+                StrokeShape="RoundRectangle 25"
+                WidthRequest="50">
+                <ImageButton Command="{Binding GoBackCommand}">
+                    <ImageButton.Source>
+                        <FontImageSource
+                            FontFamily="FontAwesome"
+                            Glyph="{x:Static styles:IconFont.ArrowLeft}"
+                            Size="22"
+                            Color="{StaticResource Primary}" />
+                    </ImageButton.Source>
+                </ImageButton>
+            </Border>
+            <Button
+                Grid.Column="1"
+                Command="{Binding SavePlanCommand}"
+                HorizontalOptions="End"
+                Text="Save"
+                VerticalOptions="FillAndExpand"
+                WidthRequest="120" />
+        </Grid>
+
+        <Grid Padding="10" IsVisible="{Binding IsNotBusy}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="7*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+
+
+            <VerticalStackLayout
+                Grid.Row="0"
+                Grid.Column="0"
+                Padding="10"
+                HorizontalOptions="Center">
+                <Label FontSize="20" Text="Start at:" />
+                <HorizontalStackLayout Spacing="10">
+                    <DatePicker
+                        Date="{Binding Plan.StartDate}"
+                        FontSize="20"
+                        IsEnabled="False"
+                        TextColor="Black" />
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.CalendarAlt}"
+                                Size="22"
+                                Color="{StaticResource Black}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="10"
+                HorizontalOptions="Center"
+                Spacing="10"
+                VerticalOptions="Start">
+
+                <HorizontalStackLayout Spacing="10">
+                    <TimePicker
+                        FontSize="20"
+                        IsEnabled="False"
+                        TextColor="Black"
+                        Time="{Binding Plan.StartTime, Mode=TwoWay}" />
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.Clock}"
+                                Size="22"
+                                Color="{StaticResource Black}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+
+            <CollectionView
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                HeightRequest="570"
+                ItemsSource="{Binding Plan.SinglePlacePlans}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="common:SinglePlacePlan">
+
+                        <Grid Padding="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <VerticalStackLayout
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="0"
+                                Margin="0,0,0,20"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding EntryDate, StringFormat='{}{0:dd.MM}'}" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="26"
+                                        Text="{Binding EntryTime, StringFormat='{}{0:hh:mm}'}" />
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+
+                            <Border
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                Padding="5"
+                                Stroke="{StaticResource Primary}"
+                                StrokeShape="RoundRectangle 10"
+                                Style="{StaticResource FrameOnList}">
+                                <VerticalStackLayout>
+                                    <Label
+                                        Padding="5"
+                                        FontAttributes="Bold"
+                                        MaxLines="2"
+                                        Text="{Binding Name}"
+                                        WidthRequest="100" />
+                                    <Label
+                                        Padding="5"
+                                        MaxLines="2"
+                                        Text="{Binding Address}"
+                                        WidthRequest="100" />
+                                </VerticalStackLayout>
+
+                            </Border>
+
+                            <Grid Grid.RowSpan="2" Grid.Column="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <VerticalStackLayout HorizontalOptions="End" VerticalOptions="Center">
+                                    <Label Text="{Binding TimeToSpendHere, StringFormat='{}{0:hh:mm}'}" />
+                                    <Image>
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="FontAwesome"
+                                                Glyph="{x:Static styles:IconFont.Clock}"
+                                                Size="18"
+                                                Color="{StaticResource Primary}" />
+                                        </Image.Source>
+                                    </Image>
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Border
+                                        Padding="5"
+                                        BackgroundColor="Transparent"
+                                        HeightRequest="35"
+                                        Stroke="{StaticResource Primary}"
+                                        StrokeShape="RoundRectangle 5"
+                                        WidthRequest="35">
+                                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type tripsviewmodel:PlanTripViewModel}}, Path=IncrementTimeCommand}" CommandParameter="{Binding .}">
+                                            <ImageButton.Source>
+                                                <FontImageSource
+                                                    FontFamily="FontAwesome"
+                                                    Glyph="{x:Static styles:IconFont.Plus}"
+                                                    Size="22"
+                                                    Color="{StaticResource Primary}" />
+                                            </ImageButton.Source>
+                                        </ImageButton>
+                                    </Border>
+                                    <Border
+                                        Padding="5"
+                                        BackgroundColor="Transparent"
+                                        HeightRequest="35"
+                                        Stroke="{StaticResource Primary}"
+                                        StrokeShape="RoundRectangle 5"
+                                        WidthRequest="35">
+                                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type tripsviewmodel:PlanTripViewModel}}, Path=DecrementCommand}" CommandParameter="{Binding .}">
+                                            <ImageButton.Source>
+                                                <FontImageSource
+                                                    FontFamily="FontAwesome"
+                                                    Glyph="{x:Static styles:IconFont.Minus}"
+                                                    Size="22"
+                                                    Color="{StaticResource Primary}" />
+                                            </ImageButton.Source>
+                                        </ImageButton>
+                                    </Border>
+
+                                </VerticalStackLayout>
+                            </Grid>
+
+
+                            <VerticalStackLayout
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center">
+                                <Label FontSize="18" Text="{Binding DistanceToNextPlace}" />
+                            </VerticalStackLayout>
+
+
+
+                            <CollectionView
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                ItemsSource="{Binding VoiceHints}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="common:VoiceHintItem">
+                                        <HorizontalStackLayout HorizontalOptions="Center">
+                                            <Border
+                                                BackgroundColor="Black"
+                                                HeightRequest="40"
+                                                WidthRequest="10" />
+                                            <Border
+                                                BackgroundColor="{StaticResource White}"
+                                                HeightRequest="40"
+                                                StrokeShape="RoundRectangle 20"
+                                                WidthRequest="40">
+                                                <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type tripsviewmodel:PlanTripViewModel}}, Path=PlayVoiceHintCommand}" CommandParameter="{Binding .}">
+                                                    <ImageButton.Source>
+                                                        <FontImageSource
+                                                            FontFamily="FontAwesome"
+                                                            Glyph="{x:Static styles:IconFont.PlayCircle}"
+                                                            Size="12"
+                                                            Color="{StaticResource Primary}" />
+                                                    </ImageButton.Source>
+                                                </ImageButton>
+                                            </Border>
+                                        </HorizontalStackLayout>
+
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <VerticalStackLayout
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center">
+                                <Label FontSize="18" Text="{Binding DurationToNextPlace}" />
+                            </VerticalStackLayout>
+
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <Grid
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Padding="5"
+                        VerticalOptions="Start">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <VerticalStackLayout
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="0"
+                            Margin="0,0,0,20"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Plan.Destination.EntryDate, StringFormat='{}{0:dd.MM}'}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="26"
+                                    Text="{Binding Plan.Destination.EntryTime, StringFormat='{}{0:dd.MM}'}" />
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+
+                        <Border
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="1"
+                            Padding="5"
+                            Stroke="{StaticResource Primary}"
+                            StrokeShape="RoundRectangle 10"
+                            Style="{StaticResource FrameOnList}">
+                            <VerticalStackLayout>
+                                <Label
+                                    Padding="5"
+                                    FontAttributes="Bold"
+                                    MaxLines="2"
+                                    Text="{Binding Plan.Destination.Name}"
+                                    WidthRequest="100" />
+                                <Label
+                                    Padding="5"
+                                    MaxLines="2"
+                                    Text="{Binding Plan.Destination.Address}"
+                                    WidthRequest="100" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Grid Grid.RowSpan="2" Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <VerticalStackLayout HorizontalOptions="End" VerticalOptions="Center">
+                                <Label Text="{Binding Plan.Destination.TimeToSpendHere, StringFormat='{}{0:hh:mm}'}" />
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource
+                                            FontFamily="FontAwesome"
+                                            Glyph="{x:Static styles:IconFont.Clock}"
+                                            Size="18"
+                                            Color="{StaticResource Primary}" />
+                                    </Image.Source>
+                                </Image>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Border
+                                    Padding="5"
+                                    BackgroundColor="Transparent"
+                                    HeightRequest="35"
+                                    Stroke="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 5"
+                                    WidthRequest="35">
+                                    <ImageButton Command="{Binding IncrementTimeCommand}" CommandParameter="{Binding Plan.Destination}">
+                                        <ImageButton.Source>
+                                            <FontImageSource
+                                                FontFamily="FontAwesome"
+                                                Glyph="{x:Static styles:IconFont.Plus}"
+                                                Size="22"
+                                                Color="{StaticResource Primary}" />
+                                        </ImageButton.Source>
+                                    </ImageButton>
+                                </Border>
+                                <Border
+                                    Padding="5"
+                                    BackgroundColor="Transparent"
+                                    HeightRequest="35"
+                                    Stroke="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 5"
+                                    WidthRequest="35">
+                                    <ImageButton Command="{Binding IncrementTimeCommand}" CommandParameter="{Binding Plan.Destination}">
+                                        <ImageButton.Source>
+                                            <FontImageSource
+                                                FontFamily="FontAwesome"
+                                                Glyph="{x:Static styles:IconFont.Minus}"
+                                                Size="22"
+                                                Color="{StaticResource Primary}" />
+                                        </ImageButton.Source>
+                                    </ImageButton>
+                                </Border>
+
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Grid>
+                </CollectionView.Footer>
+            </CollectionView>
+
+
+
+
+            <VerticalStackLayout
+                Grid.Row="2"
+                Grid.Column="0"
+                Padding="10"
+                HorizontalOptions="Center">
+                <Label FontSize="20" Text="End at:" />
+                <HorizontalStackLayout Spacing="10">
+                    <DatePicker
+                        Date="{Binding Plan.EndDate}"
+                        FontSize="20"
+                        IsEnabled="False"
+                        TextColor="Black" />
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.CalendarAlt}"
+                                Size="22"
+                                Color="{StaticResource Black}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+            <HorizontalStackLayout
+                Grid.Row="3"
+                Grid.Column="1"
+                Padding="10"
+                HorizontalOptions="Center"
+                Spacing="10"
+                VerticalOptions="End">
+
+                <HorizontalStackLayout Spacing="10">
+                    <TimePicker
+                        FontSize="20"
+                        IsEnabled="False"
+                        TextColor="Black"
+                        Time="{Binding Plan.EndTime, Mode=TwoWay}" />
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.Clock}"
+                                Size="22"
+                                Color="{StaticResource Black}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </HorizontalStackLayout>
+        </Grid>
+
+
+    </VerticalStackLayout>
+</ContentPage>

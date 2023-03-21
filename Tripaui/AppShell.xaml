@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Tripaui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Tripaui"
+    xmlns:placeviews="clr-namespace:Tripaui.Views.Places"
+    xmlns:styles="clr-namespace:Tripaui.Resources.Styles"
+    xmlns:tripviews="clr-namespace:Tripaui.Views.Trips"
+    xmlns:viewmodels="clr-namespace:Tripaui.ViewModels"
+    xmlns:views="clr-namespace:Tripaui.Views"
+    x:DataType="viewmodels:AppShellViewModel"
+    FlyoutBackgroundColor="{StaticResource BackgroundColor0}"
+    FlyoutIsPresented="{Binding FlyOutIsPresented}"
+    FlyoutWidth="200"
+    Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutItemIsVisible="{Binding FlyOutIsPresented}">
+    <!--<Shell.FlyoutBackdrop>
+        <LinearGradientBrush StartPoint="0,0"
+                             EndPoint="1,1">
+            <GradientStop Color="#8A2387"
+                          Offset="0.1" />
+            <GradientStop Color="#E94057"
+                          Offset="0.6" />
+            <GradientStop Color="#F27121"
+                          Offset="1.0" />
+        </LinearGradientBrush>
+    </Shell.FlyoutBackdrop>-->
+
+    <Shell.FlyoutHeader>
+        <Image Source="logo.png" />
+    </Shell.FlyoutHeader>
+
+    <FlyoutItem Title="Places" FlyoutIcon="{StaticResource CityIcon}">
+        <ShellContent
+            Title="Explore places"
+            ContentTemplate="{DataTemplate placeviews:PlacesListPage}"
+            Route="PlacesListPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Trips" FlyoutIcon="{StaticResource SuitcaseIcon}">
+        <ShellContent
+            Title="My trips"
+            ContentTemplate="{DataTemplate tripviews:MyTripsPage}"
+            Route="MyTripsPage" />
+    </FlyoutItem>
+    <FlyoutItem Title="Archive" FlyoutIcon="{StaticResource ArchiveIcon}">
+        <ShellContent
+            Title="Archive"
+            ContentTemplate="{DataTemplate tripviews:ArchiveTripsPage}"
+            Route="ArchiveTripsPage" />
+    </FlyoutItem>
+
+    <MenuItem Clicked="MenuItem_Clicked" Text="Sign out">
+        <MenuItem.IconImageSource>
+            <FontImageSource
+                FontFamily="FontAwesome"
+                Glyph="{x:Static styles:IconFont.SignOutAlt}"
+                Color="{StaticResource Primary}" />
+        </MenuItem.IconImageSource>
+    </MenuItem>
+    <TabBar>
+        <Tab>
+            <ShellContent
+                ContentTemplate="{DataTemplate views:RegisterPage}"
+                Icon="{StaticResource UserIcon}"
+                Route="LoginPage" />
+        </Tab>
+    </TabBar>
+
+</Shell>

@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tripaui.Views.Trips.TripDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controlls="clr-namespace:Tripaui.Views.Controlls"
+    xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
+    xmlns:models="clr-namespace:Shared.GoogleApiModels;assembly=Shared"
+    xmlns:photo="clr-namespace:GoogleApi.Entities.Places.Photos.Response;assembly=GoogleApi"
+    xmlns:responses="clr-namespace:Shared.Responses;assembly=Shared"
+    xmlns:styles="clr-namespace:Tripaui.Resources.Styles"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:tripsviewmodel="clr-namespace:Tripaui.ViewModels.Trips"
+    Title="TripDetailsPage"
+    x:DataType="tripsviewmodel:TripDetailsViewModel"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding PageAppearingCommand}" EventName="Appearing" />
+        <toolkit:EventToCommandBehavior Command="{Binding NavigatedToCommand}" EventName="NavigatedTo" />
+    </ContentPage.Behaviors>
+    <Grid BackgroundColor="{StaticResource BackgroundColor0}" WidthRequest="{Binding Width}">
+        <ActivityIndicator
+            IsRunning="{Binding IsBusy}"
+            VerticalOptions="Center"
+            WidthRequest="50" />
+        <Grid Padding="5,5" IsVisible="{Binding IsNotBusy}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="80" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  region Top bar back button and  trip name  -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Padding="10"
+                    BackgroundColor="Transparent"
+                    HeightRequest="50"
+                    HorizontalOptions="Start"
+                    Stroke="{StaticResource Primary}"
+                    StrokeShape="RoundRectangle 25"
+                    WidthRequest="50">
+                    <ImageButton Command="{Binding GoBackCommand}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.ArrowLeft}"
+                                Size="22"
+                                Color="{StaticResource Primary}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                </Border>
+
+                <Label
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    FontFamily="KalamRegular"
+                    FontSize="32"
+                    HorizontalOptions="CenterAndExpand"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap"
+                    MaxLines="2"
+                    Text="{Binding Trip.TripModel.Name}"
+                    VerticalOptions="Center" />
+
+            </Grid>
+            <!--  endregion  -->
+
+            <!--  region GeneralInfo  -->
+            <Grid Grid.Row="1" Padding="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*" />
+                    <RowDefinition Height="15*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="45*" />
+                    <ColumnDefinition Width="45*" />
+                    <ColumnDefinition Width="10*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Text="StartDate:" />
+                <HorizontalStackLayout
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <Label FontSize="20" Text="{Binding Trip.TripModel.StartDate, StringFormat='{}{0:dd.MM.yyyy}'}" />
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.CalendarAlt}"
+                                Size="22"
+                                Color="{StaticResource Black}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Text="EndDate:" />
+                <HorizontalStackLayout
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <Label FontSize="20" Text="{Binding Trip.TripModel.EndDate, StringFormat='{}{0:dd.MM.yyyy}'}" />
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.CalendarAlt}"
+                                Size="22"
+                                Color="{StaticResource Black}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+                <Border
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    Margin="0,0,0,0"
+                    Padding="4"
+                    BackgroundColor="Transparent"
+                    HeightRequest="36"
+                    HorizontalOptions="End"
+                    Stroke="{StaticResource Primary}"
+                    StrokeShape="RoundRectangle 25"
+                    VerticalOptions="Center"
+                    WidthRequest="36">
+                    <Image Margin="4">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.PencilAlt}"
+                                Size="10"
+                                Color="{StaticResource Primary}" />
+                        </Image.Source>
+                    </Image>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding EditTripCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </Grid>
+            <!--  endregion  -->
+
+            <HorizontalStackLayout Grid.Row="2">
+                <CollectionView
+                    HorizontalOptions="Center"
+                    ItemsLayout="HorizontalList"
+                    ItemsSource="{Binding TravelModes}"
+                    SelectedItem="{Binding SelectedTravelMode}"
+                    SelectionMode="Single"
+                    WidthRequest="{Binding Width}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="5"
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 20"
+                                Style="{StaticResource Key=SelectedItemOnList}"
+                                WidthRequest="90">
+                                <Label
+                                    FontSize="18"
+                                    HorizontalOptions="Center"
+                                    Text="{Binding ., Converter={StaticResource EnumToStringConverter}}"
+                                    TextColor="White"
+                                    VerticalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="3" IsVisible="{Binding IsTransitVisible}">
+                <CollectionView
+                    IsEnabled="{Binding CanModify}"
+                    ItemsLayout="HorizontalList"
+                    ItemsSource="{Binding TransitModes}"
+                    SelectedItem="{Binding SelectedTransitMode}"
+                    SelectionMode="Single"
+                    WidthRequest="{Binding Width}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                HeightRequest="40"
+                                StrokeShape="RoundRectangle 20"
+                                Style="{StaticResource Key=SelectedItemOnList}"
+                                WidthRequest="90">
+                                <Label
+                                    FontSize="18"
+                                    HorizontalOptions="Center"
+                                    Text="{Binding ., Converter={StaticResource EnumToStringConverter}}"
+                                    TextColor="White"
+                                    VerticalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </HorizontalStackLayout>
+
+            <VerticalStackLayout Grid.Row="4">
+                <Label
+                    Padding="8"
+                    FontFamily="KalamRegular"
+                    FontSize="20"
+                    HorizontalOptions="Center"
+                    Text="Plan your trip"
+                    VerticalOptions="Center" />
+                <Grid Padding="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+
+                    <ImageButton
+                        Grid.Column="0"
+                        BackgroundColor="Transparent"
+                        BorderWidth="2"
+                        Command="{Binding GoToMapPageCommand}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.Map}"
+                                Size="22"
+                                Color="{StaticResource Primary}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <ImageButton
+                        Grid.Column="1"
+                        BackgroundColor="Transparent"
+                        BorderWidth="2"
+                        Command="{Binding GoToTripPlanCommand}"
+                        IsEnabled="{Binding CanModify}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.Clock}"
+                                Size="22"
+                                Color="{StaticResource Primary}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <ImageButton
+                        Grid.Column="2"
+                        BackgroundColor="Transparent"
+                        BorderWidth="2"
+                        Command="{Binding GoToReviewsCommand}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.CommentAlt}"
+                                Size="42"
+                                Color="{StaticResource Primary}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <ImageButton
+                        Grid.Column="3"
+                        BackgroundColor="Transparent"
+                        BorderWidth="2"
+                        Command="{Binding GoToSearchPlaceCommand}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.PlusCircle}"
+                                Size="42"
+                                Color="{StaticResource GreenAdd}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                </Grid>
+            </VerticalStackLayout>
+
+            <Border
+                Grid.Row="5"
+                Margin="0,10,0,0"
+                BackgroundColor="{StaticResource Secondary}"
+                HeightRequest="6"
+                Stroke="{StaticResource Secondary}"
+                StrokeThickness="6" />
+
+            <HorizontalStackLayout Grid.Row="6" HorizontalOptions="CenterAndExpand">
+                <Image VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="FontAwesome"
+                            Glyph="{x:Static styles:IconFont.Star}"
+                            Size="22"
+                            Color="{StaticResource Tertiary}" />
+                    </Image.Source>
+                </Image>
+                <Border
+                    MaximumHeightRequest="40"
+                    StrokeShape="RoundRectangle 20"
+                    VerticalOptions="Center">
+                    <Button Command="{Binding GetRecommendedOrderCommand}" Text="Recommended Order" />
+                </Border>
+                <Image VerticalOptions="Center">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="FontAwesome"
+                            Glyph="{x:Static styles:IconFont.Star}"
+                            Size="22"
+                            Color="{StaticResource Tertiary}" />
+                    </Image.Source>
+                </Image>
+            </HorizontalStackLayout>
+            <!--  region Places added to a trip  -->
+            <dxcv:DXCollectionView
+                Grid.Row="7"
+                Margin="0,10,0,0"
+                AllowDragDropItems="{Binding CanModify}"
+                HeightRequest="500"
+                ItemsSource="{Binding Trip.PlaceDetailsList}"
+                VerticalOptions="Start">
+                <dxcv:DXCollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="responses:PlaceDetailsDto">
+                        <Border Style="{StaticResource Key=FrameOnList}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type tripsviewmodel:TripDetailsViewModel}}, Path=GoToDetailsCommand}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50*" />
+                                    <ColumnDefinition Width="50*" />
+                                    <ColumnDefinition Width="20*" />
+                                </Grid.ColumnDefinitions>
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Padding="5"
+                                    Text="{Binding PlacesDetailsResponse.Name}" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Padding="5"
+                                    Text="{Binding PlacesDetailsResponse.FormattedAddress}" />
+                                <HorizontalStackLayout
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Padding="5"
+                                    HorizontalOptions="End"
+                                    Spacing="10"
+                                    VerticalOptions="Center">
+                                    <Image>
+                                        <Image.Source>
+                                            <FontImageSource
+                                                FontFamily="FontAwesome"
+                                                Glyph="{x:Static styles:IconFont.UserAlt}"
+                                                Size="12"
+                                                Color="{StaticResource Gray500}" />
+                                        </Image.Source>
+                                    </Image>
+                                    <Label FontSize="14" Text="{Binding PlacesDetailsResponse.UserRatingsTotal}" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Padding="5"
+                                    HorizontalOptions="End"
+                                    Spacing="10"
+                                    VerticalOptions="Center">
+                                    <!--<Image>
+                                            <Image.Source>
+                                                <FontImageSource
+                                                    FontFamily="FontAwesome"
+                                                    Glyph="{x:Static styles:IconFont.Star}"
+                                                    Size="12"
+                                                    Color="{StaticResource Yellow100Accent}" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Label FontSize="14" Text="{Binding PlacesDetailsResponse.Rating, Converter={StaticResource DoubleToIntConverter}}" />-->
+                                    <controlls:SimpleRatingControl
+                                        AccentColor="{StaticResource Tertiary}"
+                                        Amount="5"
+                                        CurrentValue="{Binding PlacesDetailsResponse.Rating}"
+                                        StarSize="20" />
+                                </HorizontalStackLayout>
+
+                                <Border
+                                    Grid.RowSpan="2"
+                                    Grid.Column="2"
+                                    Margin="5"
+                                    BackgroundColor="Transparent"
+                                    HeightRequest="50"
+                                    Stroke="Black"
+                                    StrokeShape="RoundRectangle 20"
+                                    StrokeThickness="2"
+                                    WidthRequest="50">
+                                    <Button
+                                        BackgroundColor="Transparent"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type tripsviewmodel:TripDetailsViewModel}}, Path=DeletePlaceFromTripCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HeightRequest="20"
+                                        WidthRequest="20">
+                                        <Button.ImageSource>
+                                            <FontImageSource
+                                                FontFamily="FontAwesome"
+                                                Glyph="{x:Static styles:IconFont.Trash}"
+                                                Size="12"
+                                                Color="{StaticResource Black}" />
+                                        </Button.ImageSource>
+
+                                    </Button>
+                                </Border>
+
+                                <CollectionView
+                                    Grid.Row="2"
+                                    Grid.ColumnSpan="3"
+                                    ItemSizingStrategy="MeasureAllItems"
+                                    ItemsLayout="HorizontalList"
+                                    ItemsSource="{Binding Images}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="photo:PlacesPhotosResponse">
+                                            <Border StrokeShape="RoundRectangle 10">
+                                                <Image HeightRequest="100" Source="{Binding Buffer, Converter={StaticResource ByteArrayToImageSourceConverter}}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </Grid>
+                        </Border>
+
+
+                    </DataTemplate>
+                </dxcv:DXCollectionView.ItemTemplate>
+                <dxcv:DXCollectionView.Behaviors>
+                    <toolkit:EventToCommandBehavior Command="{Binding UpdateTripCommand}" EventName="CompleteItemDragDrop" />
+                </dxcv:DXCollectionView.Behaviors>
+            </dxcv:DXCollectionView>
+
+        </Grid>
+    </Grid>
+</ContentPage>

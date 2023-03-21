@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tripaui.Views.Places.PlaceDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Tripaui.Views.Controlls"
+    xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
+    xmlns:models="clr-namespace:Shared.GoogleApiModels;assembly=Shared"
+    xmlns:photo="clr-namespace:GoogleApi.Entities.Places.Photos.Response;assembly=GoogleApi"
+    xmlns:placesviewmodel="clr-namespace:Tripaui.ViewModels.Places"
+    xmlns:response="clr-namespace:GoogleApi.Entities.Places.Details.Response;assembly=GoogleApi"
+    xmlns:styles="clr-namespace:Tripaui.Resources.Styles"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:DataType="placesviewmodel:PlaceDetailsViewModel"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding PageAppearingCommand}" EventName="Appearing" />
+    </ContentPage.Behaviors>
+    <ContentPage.Resources>
+        <sys:Int32 x:Key="Int30">30</sys:Int32>
+        <sys:Int32 x:Key="Int20">20</sys:Int32>
+    </ContentPage.Resources>
+
+    <Grid BackgroundColor="{StaticResource BackgroundColor0}">
+        <ActivityIndicator IsRunning="{Binding IsBusy}" WidthRequest="50" />
+        <Grid IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!--  Arrow and Title  -->
+                <Grid
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border
+                        Grid.Column="0"
+                        Padding="10"
+                        BackgroundColor="Transparent"
+                        HeightRequest="50"
+                        HorizontalOptions="Start"
+                        Stroke="{StaticResource Primary}"
+                        StrokeShape="RoundRectangle 25"
+                        WidthRequest="50">
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.ArrowLeft}"
+                                    Size="22"
+                                    Color="{StaticResource Primary}" />
+                            </Image.Source>
+                        </Image>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Label
+                        Grid.Column="1"
+                        FontFamily="KalamRegular"
+                        FontSize="36"
+                        HorizontalOptions="CenterAndExpand"
+                        HorizontalTextAlignment="Center"
+                        MaxLines="2"
+                        VerticalOptions="Center">
+                        <Label.Text>
+                            <Binding Converter="{StaticResource StringShortcutConverter}" Path="Place.PlacesDetailsResponse.Name">
+                                <Binding.ConverterParameter>
+                                    <sys:Int32>50</sys:Int32>
+                                </Binding.ConverterParameter>
+                            </Binding>
+                        </Label.Text>
+                    </Label>
+                </Grid>
+
+                <!--  Price Level  -->
+                <Grid
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="10"
+                    HeightRequest="80">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30*" />
+                        <RowDefinition Height="70*" />
+                    </Grid.RowDefinitions>
+                    <HorizontalStackLayout>
+                        <Label FontSize="16" Text="{Binding Place.PlacesDetailsResponse.PriceLevel, Converter={StaticResource EnumToStringConverter}}" />
+
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Row="1">
+
+                        <ProgressBar
+                            Margin="0,0,10,0"
+                            Progress="{Binding Place.PlacesDetailsResponse.PriceLevel, Converter={StaticResource PriceLevelToPercentageConverter}}"
+                            ProgressColor="{StaticResource Primary}"
+                            WidthRequest="100" />
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.Coins}"
+                                    Size="22"
+                                    Color="{StaticResource Yellow100Accent}" />
+                            </Image.Source>
+                        </Image>
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.DollarSign}"
+                                    Size="22"
+                                    Color="{StaticResource Primary}" />
+                            </Image.Source>
+                        </Image>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!--  User Ratings  -->
+                <VerticalStackLayout
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,0,0,10"
+                    HeightRequest="80">
+                    <HorizontalStackLayout Padding="10" HorizontalOptions="End">
+                        <Label
+                            Margin="4,0"
+                            FontSize="20"
+                            Text="{Binding Place.PlacesDetailsResponse.UserRatingsTotal}" />
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.UserAlt}"
+                                    Size="22"
+                                    Color="{StaticResource Primary}" />
+                            </Image.Source>
+                        </Image>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Padding="10" HorizontalOptions="End">
+                        <!--<Label
+                            Margin="2,0"
+                            FontSize="20"
+                            Text="{Binding Place.PlacesDetailsResponse.Rating, Converter={StaticResource DoubleToIntConverter}}" />
+                        <Image>
+                            <Image.Source>
+                                <FontImageSource
+                                    FontFamily="FontAwesome"
+                                    Glyph="{x:Static styles:IconFont.Star}"
+                                    Size="22"
+                                    Color="{StaticResource Yellow100Accent}" />
+                            </Image.Source>
+                        </Image>-->
+                        <controls:SimpleRatingControl
+                            AccentColor="{StaticResource Tertiary}"
+                            Amount="5"
+                            CurrentValue="{Binding Place.PlacesDetailsResponse.Rating}"
+                            StarSize="20" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Padding="10"
+                    BackgroundColor="{StaticResource GreenAdd}"
+                    HorizontalOptions="End"
+                    Stroke="{StaticResource GreenAdd}"
+                    StrokeShape="RoundRectangle 50"
+                    StrokeThickness="4"
+                    VerticalOptions="Center">
+                    <ImageButton
+                        BackgroundColor="{StaticResource GreenAdd}"
+                        Command="{Binding AddPlaceToTripCommand}"
+                        HeightRequest="50"
+                        WidthRequest="50">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.Plus}"
+                                Size="22"
+                                Color="{StaticResource White}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                </Border>
+
+                <!--  Place Types Collection  -->
+                <CollectionView
+                    Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    Margin="5"
+                    HeightRequest="40"
+                    ItemsLayout="HorizontalList"
+                    ItemsSource="{Binding Place.PlacesDetailsResponse.Types}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BackgroundColor="{StaticResource Primary}"
+                                Stroke="Transparent"
+                                StrokeShape="RoundRectangle 20"
+                                StrokeThickness="1">
+                                <Label
+                                    Padding="10"
+                                    FontAttributes="Bold"
+                                    FontSize="12"
+                                    Text="{Binding ., Converter={StaticResource EnumToStringConverter}}"
+                                    TextColor="{StaticResource White}" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--  Image Carousel  -->
+                <CollectionView
+                    Grid.Row="3"
+                    Grid.ColumnSpan="3"
+                    HeightRequest="304"
+                    ItemsLayout="HorizontalList"
+                    ItemsSource="{Binding Place.Images}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="photo:PlacesPhotosResponse">
+                            <Border StrokeShape="RoundRectangle 10">
+                                <Image HeightRequest="300" Source="{Binding Buffer, Converter={StaticResource ByteArrayToImageSourceConverter}}" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--  Address and Map Icon  -->
+                <Grid
+                    Grid.Row="4"
+                    Grid.ColumnSpan="3"
+                    Margin="10"
+                    HeightRequest="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*" />
+                        <ColumnDefinition Width="25*" />
+                    </Grid.ColumnDefinitions>
+                    <ImageButton
+                        Grid.Column="0"
+                        Margin="10,0,0,0"
+                        Command="{Binding NavigateToBuildingCommand}"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Start">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                FontFamily="FontAwesome"
+                                Glyph="{x:Static styles:IconFont.MapMarked}"
+                                Size="26"
+                                Color="{StaticResource Primary}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <Label
+                        Grid.Column="1"
+                        FontSize="22"
+                        HorizontalOptions="Start"
+                        LineBreakMode="WordWrap"
+                        MaxLines="2"
+                        VerticalOptions="Start">
+                        <Label.Text>
+                            <Binding Converter="{StaticResource StringShortcutConverter}" Path="Place.PlacesDetailsResponse.FormattedAddress">
+                                <Binding.ConverterParameter>
+                                    <sys:Int32>28</sys:Int32>
+                                </Binding.ConverterParameter>
+                            </Binding>
+                        </Label.Text>
+                    </Label>
+
+
+                </Grid>
+
+                <!--  Review Collection  -->
+                <CollectionView
+                    Grid.Row="5"
+                    Grid.ColumnSpan="3"
+                    BackgroundColor="Transparent"
+                    HeightRequest="320"
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemsSource="{Binding Place.PlacesDetailsResponse.Review}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="response:Review">
+                            <VerticalStackLayout Margin="0,10" Spacing="10">
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="{Binding AuthorName}" />
+
+                                    <controls:SimpleRatingControl
+                                        AccentColor="{StaticResource Tertiary}"
+                                        Amount="5"
+                                        CurrentValue="{Binding Rating}"
+                                        StarSize="20" />
+                                    <Label Text="{Binding DateTime, StringFormat='{}{0:dd.MM.yyyy}'}" />
+
+                                </HorizontalStackLayout>
+                                <Border
+                                    BackgroundColor="Transparent"
+                                    Stroke="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 15"
+                                    StrokeThickness="3">
+                                    <Grid>
+                                        <Label Margin="50,5,0,0" Text="{Binding Text}" />
+                                        <ImageButton
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type placesviewmodel:PlaceDetailsViewModel}}, Path=OpenBrowserCommand}"
+                                            CommandParameter="{Binding AuthorUrl}"
+                                            HeightRequest="40"
+                                            HorizontalOptions="Start"
+                                            Source="{Binding ProfilePhotoUrl}"
+                                            VerticalOptions="Start"
+                                            WidthRequest="40" />
+
+                                    </Grid>
+
+                                </Border>
+
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Grid>
+
+    </Grid>
+
+
+</ContentPage>

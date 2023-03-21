@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Tripaui.Views.Controlls.SuccessPopup"
+             Color="Transparent">
+    <Border 
+        WidthRequest="200"
+        StrokeThickness="2"
+        Stroke="{StaticResource Gray300}"
+        StrokeShape="RoundRectangle 10">
+        <VerticalStackLayout Padding="20">
+            <Label x:Name="LabelName"
+                   Text="Success!!!"
+                   TextColor="#0c00b3"
+                   Style="{StaticResource Key=PopupLabel}"/>
+            <Border HeightRequest="1" BackgroundColor="Black" Margin="0,5"/>
+            <Button Text="OK"
+                    TextColor="{StaticResource GreenAdd}"
+                    BorderColor="{StaticResource GreenAdd}"
+                    Style="{StaticResource PopupButton}"
+                    Clicked="ClosePopup"
+                    Margin="0,10,0,0">
+                <Button.Shadow>
+                    <Shadow Brush="{StaticResource GreenAdd}" 
+                                Radius="40" 
+                                Opacity="0.8"/>
+                </Button.Shadow>
+            </Button>
+
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

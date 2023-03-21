@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tripaui.Views.Trips.MapPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+    xmlns:models="clr-namespace:Shared.Common;assembly=Shared"
+    xmlns:styles="clr-namespace:Tripaui.Resources.Styles"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:tripsviewmodel="clr-namespace:Tripaui.ViewModels.Trips"
+    Title="Map"
+    x:DataType="tripsviewmodel:MapViewModel"
+    Appearing="ContentPage_Appearing"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <VerticalStackLayout BackgroundColor="{StaticResource BackgroundColor0}">
+        <Border
+            Padding="10"
+            BackgroundColor="Transparent"
+            HeightRequest="50"
+            HorizontalOptions="Start"
+            Stroke="{StaticResource Primary}"
+            StrokeShape="RoundRectangle 25"
+            WidthRequest="50">
+            <ImageButton Command="{Binding GoBackCommand}">
+                <ImageButton.Source>
+                    <FontImageSource
+                        FontFamily="FontAwesome"
+                        Glyph="{x:Static styles:IconFont.ArrowLeft}"
+                        Size="22"
+                        Color="{StaticResource Primary}" />
+                </ImageButton.Source>
+            </ImageButton>
+        </Border>
+        <maps:Map
+            x:Name="map"
+            HeightRequest="{Binding Height}"
+            VerticalOptions="CenterAndExpand">
+            <maps:Map.ItemTemplate>
+                <DataTemplate x:DataType="maps:Pin">
+                    <Pin
+                        Address="{Binding Address}"
+                        Label="{Binding Label}"
+                        Location="{Binding Location}" />
+                </DataTemplate>
+            </maps:Map.ItemTemplate>
+        </maps:Map>
+    </VerticalStackLayout>
+</ContentPage>

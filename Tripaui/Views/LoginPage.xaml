@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tripaui.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dxdf="clr-namespace:DevExpress.Maui.DataForm;assembly=DevExpress.Maui.Editors"
+    xmlns:forms="clr-namespace:Tripaui.Forms"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodels="clr-namespace:Tripaui.ViewModels"
+    Title="LoginPage"
+    x:DataType="viewmodels:LoginViewModel"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding PageAppearingCommand}" EventName="Loaded" />
+    </ContentPage.Behaviors>
+    <Grid BackgroundColor="{StaticResource BackgroundColor0}">
+        <VerticalStackLayout>
+
+            <dxdf:DataFormView
+                x:Name="dataForm"
+                BackgroundColor="Transparent"
+                CommitMode="PropertyChanged"
+                DataObject="{Binding Form}"
+                ValidationMode="PropertyChanged">
+                <dxdf:DataFormTextItem
+                    ClearIconVisibility="Always"
+                    FieldName="Email"
+                    IsLabelVisible="True"
+                    ItemOrderInRow="1"
+                    LabelColor="Black"
+                    LabelFontAttributes="Bold"
+                    LabelFontSize="18"
+                    Placeholder="user@example.com"
+                    RowOrder="1" />
+
+                <dxdf:DataFormPasswordItem
+                    ClearIconVisibility="Always"
+                    FieldName="Password"
+                    IsLabelVisible="True"
+                    ItemOrderInRow="1"
+                    LabelColor="Black"
+                    LabelFontAttributes="Bold"
+                    LabelFontSize="18"
+                    Placeholder="At least 6 letters"
+                    RowOrder="2" />
+            </dxdf:DataFormView>
+            <Border
+                HeightRequest="56"
+                StrokeShape="RoundRectangle 28"
+                StrokeThickness="0"
+                WidthRequest="300">
+                <Button
+                    Command="{Binding LoginCommand}"
+                    FontSize="26"
+                    Text="Log in" />
+            </Border>
+            <Label
+                Margin="10"
+                HorizontalOptions="Center"
+                Text="Don't have an account?" />
+            <Border
+                HeightRequest="56"
+                StrokeShape="RoundRectangle 28"
+                StrokeThickness="0"
+                WidthRequest="300">
+                <Button
+                    Command="{Binding GoToRegisterCommand}"
+                    FontSize="26"
+                    Text="Sign up" />
+            </Border>
+
+            <Image x:Name="LogoImage" Margin="50" Source="Images/logo.png" />
+
+        </VerticalStackLayout>
+        <ActivityIndicator
+            Margin="0,500,0,0"
+            IsRunning="{Binding IsBusy}"
+            WidthRequest="50" />
+    </Grid>
+
+</ContentPage>
