@@ -7,9 +7,9 @@
 * Firebase integration
 
 ## Short video presenting the application:
-[![TRIPAUI](/Trip-MauiMobileApp/imgDoc/logo.png)](https://youtu.be/XPsgYrVoIyA)
+[![TRIPAUI](/imgDoc/logo.png)](https://youtu.be/XPsgYrVoIyA)
 
 ## Functionalities
 
 - Searching for a list of places
-![GUI](/Trip-MauiMobileApp/imgDoc/placelistscreen.png)
+![GUI](/imgDoc/placelistscreen.png)
