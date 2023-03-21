@@ -7,9 +7,9 @@
 * Firebase integration
 
 ## Short video presenting the application:
-[![TRIPAUI](/imgDoc/logo.png)](https://youtu.be/XPsgYrVoIyA)
+[![TRIPAUI](/imgDoc/logo.png = 100x100)](https://youtu.be/XPsgYrVoIyA)
 
 ## Functionalities
 
 - Searching for a list of places
-![GUI](/imgDoc/placelistscreen.png)
+![GUI](/imgDoc/placelistscreen.png =400x100)
